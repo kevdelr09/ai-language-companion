@@ -130,21 +130,39 @@ else:
                         if english_main:
                             st.markdown(f"🇺🇸 **English Meaning:** {english_main}")
                 
-                # 🎙️ ACCENT-SPECIFIC VOICE ENGINE
+                 # 🎙️ MOBILE-PROOF USER GESTURE UNLOCK BUTTON
+                # Only renders next to the very latest message block for clean user access
                 if idx == total_m - 1 and chat_main:
                     safe_narr = chat_main.replace('"', '\\"').replace("'", "\\'").replace('\n', ' ')
+                    
+                    # Streamlit component generates a physical html layout button
+                    # Tapping it satisfies the mobile web gesture permissions check flawlessly!
                     st.components.v1.html(
                         f"""
+                        <button onclick="speakText()" style="
+                            background-color: #2e7d32; 
+                            color: white; 
+                            border: none; 
+                            padding: 8px 16px; 
+                            border-radius: 5px; 
+                            cursor: pointer; 
+                            font-weight: bold;
+                            margin-top: 5px;
+                        ">🔊 Listen to Pronunciation</button>
+                        
                         <script>
-                        window.parent.speechSynthesis.cancel(); 
-                        var msg = new SpeechSynthesisUtterance("{safe_narr}"); 
-                        msg.lang = "{browser_voice_lang}"; 
-                        msg.rate = 0.85; 
-                        window.parent.speechSynthesis.speak(msg);
+                        function speakText() {{
+                            window.parent.speechSynthesis.cancel(); 
+                            var msg = new SpeechSynthesisUtterance("{safe_narr}"); 
+                            msg.lang = "{browser_voice_lang}"; 
+                            msg.rate = 0.85; 
+                            window.parent.speechSynthesis.speak(msg);
+                        }}
                         </script>
                         """,
-                        height=0
+                        height=45
                     )
+
             elif msg["role"] == "user":
                 st.chat_message("user", avatar="👤").write(msg["content"])
 
